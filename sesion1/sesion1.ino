@@ -7,13 +7,18 @@ DHT dht(DHTPIN, DHT11);
 void setup() {
   Serial.begin(9600);
   dht.begin();
+  float humidity_threshold = dht.readHumidity() + 2;
+  float temperature_threshold = dht.readTemperature() + 2;
 }
 
 void loop() {
   delay(5000);
-  float h = dht.readHumidity();
-  float t = dht.readTemperature();
-  Serial.print(h);
-  Serial.print(t);
-  Serial.print("-------\n");
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+  Serial.print("Temperatura: ");
+  Serial.print(temperature);
+  Serial.println(" ºC");
+  Serial.print("Humedad: ");
+  Serial.print(humidity);
+  Serial.println(" %");
 }
