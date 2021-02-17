@@ -15,6 +15,12 @@ void loop() {
   delay(5000);
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
+
+  if (isnan(temperature) || isnan(humidity)) {
+    Serial.println("Error obteniendo los datos del sensor DHT11");
+    return;
+  }
+  
   Serial.print("Temperatura: ");
   Serial.print(temperature);
   Serial.println(" ºC");
