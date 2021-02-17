@@ -1,14 +1,19 @@
 #include<DHT.h>
 
-#define DHTPIN 3
+#define DHT_PIN 3
+#define FAN_PIN 8
+#define LED_PIN 9
 
-DHT dht(DHTPIN, DHT11);
+DHT dht(DHT_PIN, DHT11);
+float humidity_threshold, temperature_threshold;
 
 void setup() {
   Serial.begin(9600);
+  pinMode(FAN_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
   dht.begin();
-  float humidity_threshold = dht.readHumidity() + 2;
-  float temperature_threshold = dht.readTemperature() + 2;
+  humidity_threshold = dht.readHumidity() + 2;
+  temperature_threshold = dht.readTemperature() + 2;
 }
 
 void loop() {
@@ -27,4 +32,21 @@ void loop() {
   Serial.print("Humedad: ");
   Serial.print(humidity);
   Serial.println(" %");
+
+  if (temperature >= temperature_threshold) {
+    // turn on fan
+    digitalWrite(FAN_PIN, HIGH);
+  } else {
+    // turn off fan
+    digitalWrite(FAN_PIN, LOW);
+  }
+
+  if (humidity >= humidity_threshold) {
+    // turn on led
+    digitalWrite(LED_PIN, HIGH);
+  } else {
+    // turn off led
+    digitalWrite(LED_PIN, LOW);
+  }
+  
 }
