@@ -12,8 +12,8 @@ void setup() {
   pinMode(FAN_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
   dht.begin();
-  humidity_threshold = dht.readHumidity() + 2;
   temperature_threshold = dht.readTemperature() + 2;
+  humidity_threshold = dht.readHumidity() + 2;
 }
 
 void loop() {
