@@ -5,7 +5,8 @@
 #define LED_PIN 9
 
 DHT dht(DHT_PIN, DHT11);
-float humidity_threshold, temperature_threshold;
+float temperature_threshold, humidity_threshold;
+bool fan_on, led_on;
 
 void setup() {
   Serial.begin(9600);
@@ -14,6 +15,14 @@ void setup() {
   dht.begin();
   temperature_threshold = dht.readTemperature() + 2;
   humidity_threshold = dht.readHumidity() + 2;
+  fan_on = false;
+  led_on = false;
+  Serial.print("Umbral temperatura: ");
+  Serial.print(temperature_threshold);
+  Serial.println(" ºC");
+  Serial.print("Umbral humedad: ");
+  Serial.print(humidity_threshold);
+  Serial.println(" %");
 }
 
 void loop() {
@@ -33,20 +42,28 @@ void loop() {
   Serial.print(humidity);
   Serial.println(" %");
 
-  if (temperature >= temperature_threshold) {
+  if (temperature >= temperature_threshold && !fan_on) {
     // turn on fan
+    Serial.println("Encendido automatico ventilador");
     digitalWrite(FAN_PIN, HIGH);
-  } else {
+    fan_on = true;
+  } else if (temperature < temperature_threshold && fan_on) {
     // turn off fan
+    Serial.println("Apagado automatico ventilador");
     digitalWrite(FAN_PIN, LOW);
+    fan_on = false;
   }
 
-  if (humidity >= humidity_threshold) {
+  if (humidity >= humidity_threshold && !led_on) {
     // turn on led
+    Serial.println("Encendido automatico LED");
     digitalWrite(LED_PIN, HIGH);
-  } else {
+    led_on = true;
+  } else if (humidity < humidity_threshold && led_on) {
     // turn off led
+    Serial.println("Apagado automatico LED");
     digitalWrite(LED_PIN, LOW);
+    led_on = false;
   }
   
 }
