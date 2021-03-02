@@ -25,23 +25,17 @@ void setup() {
   Serial.println(" %");
 }
 
-void loop() {
-  delay(5000);
-  float temperature = dht.readTemperature();
-  float humidity = dht.readHumidity();
-
-  if (isnan(temperature) || isnan(humidity)) {
-    Serial.println("Error obteniendo los datos del sensor DHT11");
-    return;
-  }
-  
+void print_sensor_info(float temperature, float humidity) {
   Serial.print("Temperatura: ");
   Serial.print(temperature);
   Serial.println(" ºC");
   Serial.print("Humedad: ");
   Serial.print(humidity);
   Serial.println(" %");
+}
 
+void check_sensor_info(float temperature, float humidity) {
+  
   if (temperature >= temperature_threshold && !fan_on) {
     // turn on fan
     Serial.println("Encendido automatico ventilador");
@@ -65,5 +59,20 @@ void loop() {
     digitalWrite(LED_PIN, LOW);
     led_on = false;
   }
+  
+}
+
+void loop() {
+  delay(5000);
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  if (isnan(temperature) || isnan(humidity)) {
+    Serial.println("Error obteniendo los datos del sensor DHT11");
+    return;
+  }
+
+  print_sensor_info(temperature, humidity);
+  check_sensor_info(temperature, humidity);
   
 }
