@@ -3,9 +3,13 @@
 #define DHT_PIN 3
 #define FAN_PIN 8
 #define LED_PIN 9
+#define HISTORY_SIZE 10
 
 DHT dht(DHT_PIN, DHT11);
 float temperature_threshold, humidity_threshold;
+float temperature_history[HISTORY_SIZE];
+float humidity_history[HISTORY_SIZE];
+int history_index = 0;
 bool fan_on, led_on;
 
 void setup() {
@@ -23,6 +27,10 @@ void setup() {
   Serial.print("Umbral humedad: ");
   Serial.print(humidity_threshold);
   Serial.println(" %");
+  for (int i = 0; i < HISTORY_SIZE; i++) {
+    temperature_history[i] = 0;
+    humidity_history[i] = 0;
+  }
 }
 
 void print_sensor_info(float temperature, float humidity) {
@@ -63,7 +71,7 @@ void check_sensor_info(float temperature, float humidity) {
 }
 
 void loop() {
-  delay(5000);
+  delay(1000);
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
 
@@ -74,5 +82,9 @@ void loop() {
 
   print_sensor_info(temperature, humidity);
   check_sensor_info(temperature, humidity);
+
+  temperature_history[history_index] = temperature;
+  humidity_history[history_index] = humidity;
+  history_index = (history_index+1) % HISTORY_SIZE;
   
 }
