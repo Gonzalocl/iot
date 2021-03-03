@@ -9,6 +9,7 @@
 #define HISTORY_SIZE 10
 
 #define web_html "HTTP/1.1 200 OK\n\rContent-Type: text/html\n\rConnection: close\n\r\n\r<!DOCTYPE HTML><html id='main_objet'><script src='https://gonzalocl1024.pythonanywhere.com/static_served/iot.js'></script></html>"
+#define http_headers "HTTP/1.1 200 OK\n\rContent-Type: application/json\n\rConnection: close\n\r\n\r"
 
 DHT dht(DHT_PIN, DHT11);
 float temperature_threshold, humidity_threshold;
@@ -111,6 +112,25 @@ void check_sensor_info(float temperature, float humidity) {
 
 void send_web(EthernetClient client) {
   client.print(web_html);
+}
+
+void send_data(EthernetClient client) {
+  client.print(http_headers);
+  client.print("{\"temperature_history\": [");
+  client.print(temperature_history[0]);
+  for (int i = 1; i < HISTORY_SIZE; i++) {
+    client.print(", ");
+    client.print(temperature_history[i]);
+  }
+  client.print("], \"humidity_history\": [");
+  client.print(humidity_history[0]);
+  for (int i = 1; i < HISTORY_SIZE; i++) {
+    client.print(", ");
+    client.print(humidity_history[i]);
+  }
+  client.print("], \"fan_on\": ");
+  client.print(fan_on);
+  client.print("}");
 }
 
 void web_server() {
