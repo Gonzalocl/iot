@@ -8,6 +8,14 @@
 #define LED_PIN 9
 #define HISTORY_SIZE 10
 
+#define http_headers "HTTP/1.1 200 OK\n\rContent-Type: text/html\n\rConnection: close\n\r\n\r"
+#define web_html_0 "<!DOCTYPE HTML><html><table><tr><td><strong>Historial de temperatura</strong></td><td><strong>Historial de humedad</strong></td></tr>"
+#define web_html_1 "<tr>"
+#define web_html_2 "<td>"
+#define web_html_3 "</td>"
+#define web_html_4 "</td>"
+#define web_html_5 "</table></html>"
+
 DHT dht(DHT_PIN, DHT11);
 float temperature_threshold, humidity_threshold;
 float temperature_history[HISTORY_SIZE];
@@ -107,12 +115,20 @@ void check_sensor_info(float temperature, float humidity) {
   
 }
 
-String http_headers = "HTTP/1.1 200 OK\n\rContent-Type: text/html\n\rConnection: close\n\r\n\r";
-String web_html = "<!DOCTYPE HTML><html>Test 0</html>";
-
 void send_web(EthernetClient client) {
   client.print(http_headers);
-  client.print(web_html);
+  client.println(web_html_0);
+  for (int i = 0; i < HISTORY_SIZE; i++) {
+    client.print(web_html_1);
+    client.print(web_html_2);
+    client.print(temperature_history[i]);
+    client.print(web_html_3);
+    client.print(web_html_2);
+    client.print(humidity_history[i]);
+    client.print(web_html_3);
+    client.println(web_html_4);
+  }
+  client.print(web_html_5);
 }
 
 void web_server() {
