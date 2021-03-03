@@ -107,9 +107,11 @@ void check_sensor_info(float temperature, float humidity) {
   
 }
 
-String web_html = "HTTP/1.1 200 OK\n\rContent-Type: text/html\n\rConnection: close\n\r\n\r<!DOCTYPE HTML><html>Test 0</html>";
+String http_headers = "HTTP/1.1 200 OK\n\rContent-Type: text/html\n\rConnection: close\n\r\n\r";
+String web_html = "<!DOCTYPE HTML><html>Test 0</html>";
 
 void send_web(EthernetClient client) {
+  client.print(http_headers);
   client.print(web_html);
 }
 
