@@ -1,5 +1,8 @@
 #include<DHT.h>
 
+#include <SPI.h>
+#include <Ethernet.h>
+
 #define DHT_PIN 3
 #define FAN_PIN 8
 #define LED_PIN 9
@@ -12,8 +15,37 @@ float humidity_history[HISTORY_SIZE];
 int history_index = 0;
 bool fan_on, led_on;
 
+byte mac[] = {
+  0x90, 0xA2, 0xDA, 0x10, 0x80, 0xAA
+};
+IPAddress ip(169, 254, 139, 190);
+EthernetServer server(80);
+
+void start_web_server() {
+
+  // start Ethernet
+  Ethernet.begin(mac, ip);
+
+  // check hardware
+  if (Ethernet.hardwareStatus() == EthernetNoHardware) {
+    Serial.println("No hay puerto Ethernet");
+    while (true) {
+      delay(1000);
+    }
+  }
+  if (Ethernet.linkStatus() == LinkOFF) {
+    Serial.println("Cable Ethernet no conectado");
+  }
+
+  // start server
+  server.begin();
+  Serial.print("Server ip: ");
+  Serial.println(Ethernet.localIP());
+}
+
 void setup() {
   Serial.begin(9600);
+  while(!Serial);
   pinMode(FAN_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
   dht.begin();
@@ -31,6 +63,8 @@ void setup() {
     temperature_history[i] = 0;
     humidity_history[i] = 0;
   }
+
+  start_web_server();
 }
 
 void print_sensor_info(float temperature, float humidity) {
