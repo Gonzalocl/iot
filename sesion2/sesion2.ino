@@ -107,6 +107,35 @@ void check_sensor_info(float temperature, float humidity) {
   
 }
 
+String web_html = "HTTP/1.1 200 OK\n\rContent-Type: text/html\n\rConnection: close\n\r\n\r<!DOCTYPE HTML><html>Test 0</html>";
+
+void send_web(EthernetClient client) {
+  client.print(web_html);
+}
+
+void web_server() {
+  EthernetClient client = server.available();
+  if (client) {
+    boolean blank_line = true;
+    while (client.connected()) {
+      if (client.available()) {
+        // read char by char
+        char c = client.read();
+        if (c == '\n' && blank_line) {
+          send_web(client);
+        }
+        if (c == '\n') {
+          blank_line = true;
+        } else if (c != '\r') {
+          blank_line = false;
+        }
+      }
+    }
+    delay(1);
+    client.stop();
+  }
+}
+
 void loop() {
   delay(1000);
   float temperature = dht.readTemperature();
@@ -123,5 +152,6 @@ void loop() {
   temperature_history[history_index] = temperature;
   humidity_history[history_index] = humidity;
   history_index = (history_index+1) % HISTORY_SIZE;
-  
+
+  web_server();
 }
