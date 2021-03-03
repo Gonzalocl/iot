@@ -129,10 +129,11 @@ void web_server() {
         } else if (c != '\r') {
           blank_line = false;
         }
+      } else {
+        delay(1);
+        client.stop();
       }
     }
-    delay(1);
-    client.stop();
   }
 }
 
