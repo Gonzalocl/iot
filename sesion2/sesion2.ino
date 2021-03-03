@@ -46,6 +46,7 @@ void start_web_server() {
 void setup() {
   Serial.begin(9600);
   while(!Serial);
+  
   pinMode(FAN_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
   dht.begin();
@@ -53,12 +54,14 @@ void setup() {
   humidity_threshold = dht.readHumidity() + 2;
   fan_on = false;
   led_on = false;
+  
   Serial.print("Umbral temperatura: ");
   Serial.print(temperature_threshold);
   Serial.println(" ºC");
   Serial.print("Umbral humedad: ");
   Serial.print(humidity_threshold);
   Serial.println(" %");
+  
   for (int i = 0; i < HISTORY_SIZE; i++) {
     temperature_history[i] = 0;
     humidity_history[i] = 0;
