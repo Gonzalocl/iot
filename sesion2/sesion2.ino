@@ -133,16 +133,55 @@ void send_data(EthernetClient client) {
   client.print("}");
 }
 
+char request_get_data[] = "GET /data ";
+int get_data_length = 10;
+char request_fan_on[] = "POST /fan_on ";
+int fan_on_length = 13;
+char request_fan_off[] = "POST /fan_off ";
+int fan_off_length = 14;
+boolean is_get_data, is_fan_on, is_fan_off;
+
+boolean is_request(char c, int i, char *request, int req_length, boolean &is_req) {
+  if (!is_req) return false;
+  if (i < req_length) {
+    if (c != request[i]) {
+      is_req = false;
+    }
+    return false;
+  }
+  if (i == req_length && is_req) return true;
+  return false;
+}
+
 void web_server() {
   EthernetClient client = server.available();
   if (client) {
     boolean blank_line = true;
+    int i = 0;
+    boolean is_req = false;
+    is_get_data = is_fan_on = is_fan_off = true;
     while (client.connected()) {
       if (client.available()) {
         // read char by char
         char c = client.read();
+        if (!is_req) {
+          is_req = is_request(c, i, request_get_data, get_data_length, is_get_data) || 
+            is_request(c, i, request_fan_on, fan_on_length, is_fan_on) ||
+            is_request(c, i, request_fan_off, fan_off_length, is_fan_off);
+        }
+        i++;
         if (c == '\n' && blank_line) {
-          send_web(client);
+          if (is_get_data) {
+            Serial.println("Get data request");
+            send_data(client);
+          } else if (is_fan_on) {
+            Serial.println("Fan on request");
+          } else if (is_fan_off) {
+            Serial.println("Fan off request");
+          } else {
+            Serial.println("Get web request");
+            send_web(client);
+          }
         }
         if (c == '\n') {
           blank_line = true;
