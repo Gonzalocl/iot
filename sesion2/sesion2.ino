@@ -18,6 +18,14 @@ float humidity_history[HISTORY_SIZE];
 int history_index = 0;
 bool fan_on, led_on;
 
+char request_get_data[] = "GET /data ";
+char request_fan_on[] = "POST /fan_on ";
+char request_fan_off[] = "POST /fan_off ";
+int get_data_length = 10;
+int fan_on_length = 13;
+int fan_off_length = 14;
+boolean is_get_data, is_fan_on, is_fan_off;
+
 byte mac[] = {
   0x90, 0xA2, 0xDA, 0x10, 0x80, 0xAA
 };
@@ -133,14 +141,6 @@ void send_data(EthernetClient client) {
   client.print("}");
 }
 
-char request_get_data[] = "GET /data ";
-int get_data_length = 10;
-char request_fan_on[] = "POST /fan_on ";
-int fan_on_length = 13;
-char request_fan_off[] = "POST /fan_off ";
-int fan_off_length = 14;
-boolean is_get_data, is_fan_on, is_fan_off;
-
 boolean is_request(char c, int i, char *request, int req_length, boolean &is_req) {
   if (!is_req) return false;
   if (i < req_length) {
@@ -170,6 +170,7 @@ void web_server() {
             is_request(c, i, request_fan_off, fan_off_length, is_fan_off);
         }
         i++;
+        
         if (c == '\n' && blank_line) {
           if (is_get_data) {
             Serial.println("Get data request");
@@ -183,6 +184,7 @@ void web_server() {
             send_web(client);
           }
         }
+        
         if (c == '\n') {
           blank_line = true;
         } else if (c != '\r') {
