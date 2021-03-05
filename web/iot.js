@@ -9,6 +9,7 @@ data_request.send(null);
 function data_received() {
     let sensor_data = data_request.response;
     create_history_table(sensor_data);
+    create_fan_button(sensor_data);
 }
 
 function create_history_table(sensor_data) {
@@ -27,4 +28,18 @@ function add_row(history, temperature, humidity) {
     let humidity_cell = row.insertCell(1);
     temperature_cell.innerHTML = temperature;
     humidity_cell.innerHTML = humidity;
+}
+
+function create_fan_button(sensor_data) {
+    let fan_state = document.createElement('div');
+    let fan_switch = document.createElement('button');
+    if (sensor_data.fan_on === '0') {
+        fan_state.textContent = 'Fan state: OFF';
+        fan_switch.textContent = 'ON';
+    } else {
+        fan_state.textContent = 'Fan state: ON';
+        fan_switch.textContent = 'OFF';
+    }
+    main_objet.appendChild(fan_state);
+    main_objet.appendChild(fan_switch);
 }
