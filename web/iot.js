@@ -1,11 +1,30 @@
-document.getElementById('main_objet').innerHTML = 'Loading...';
-var data_request = new XMLHttpRequest();
+let main_objet = document.getElementById('main_objet');
+main_objet.innerHTML = 'Loading...';
+let data_request = new XMLHttpRequest();
 data_request.responseType = 'json';
 data_request.open('GET', '/data', true);
 data_request.onload = data_received;
 data_request.send(null);
 
 function data_received() {
-    var sensor_data = data_request.response;
-    console.log(sensor_data);
+    let sensor_data = data_request.response;
+    create_history_table(sensor_data);
+}
+
+function create_history_table(sensor_data) {
+    let history = document.createElement('table');
+    add_row(history, 'Temperature history', 'Humidity history');
+    for (let i = 0; i < sensor_data.temperature_history.length; i++) {
+        add_row(history, sensor_data.temperature_history[i], sensor_data.humidity_history[i])
+    }
+    main_objet.innerHTML = '';
+    main_objet.appendChild(history);
+}
+
+function add_row(history, temperature, humidity) {
+    let row = history.insertRow();
+    let temperature_cell = row.insertCell(0);
+    let humidity_cell = row.insertCell(1);
+    temperature_cell.innerHTML = temperature;
+    humidity_cell.innerHTML = humidity;
 }
