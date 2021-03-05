@@ -33,7 +33,7 @@ function add_row(history, temperature, humidity) {
 function create_fan_button(sensor_data) {
     let fan_state = document.createElement('div');
     let fan_switch = document.createElement('button');
-    if (sensor_data.fan_on === '0') {
+    if (sensor_data.fan_on == '0') {
         fan_state.textContent = 'Fan state: OFF';
         fan_switch.textContent = 'ON';
     } else {
