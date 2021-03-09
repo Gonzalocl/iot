@@ -16,7 +16,7 @@ float temperature_threshold, humidity_threshold;
 float temperature_history[HISTORY_SIZE];
 float humidity_history[HISTORY_SIZE];
 int history_index = 0;
-bool fan_on, led_on;
+boolean fan_on, fan_real_on, led_on;
 
 char request_get_data[] = "GET /data ";
 char request_fan_on[] = "POST /fan_on ";
@@ -64,6 +64,7 @@ void setup() {
   temperature_threshold = dht.readTemperature() + 2;
   humidity_threshold = dht.readHumidity() + 2;
   fan_on = false;
+  fan_real_on = false;
   led_on = false;
   
   Serial.print("Umbral temperatura: ");
@@ -97,11 +98,13 @@ void check_sensor_info(float temperature, float humidity) {
     Serial.println("Encendido automatico ventilador");
     digitalWrite(FAN_PIN, HIGH);
     fan_on = true;
+    fan_real_on = true;
   } else if (temperature < temperature_threshold && fan_on) {
     // turn off fan
     Serial.println("Apagado automatico ventilador");
     digitalWrite(FAN_PIN, LOW);
     fan_on = false;
+    fan_real_on = false;
   }
 
   if (humidity >= humidity_threshold && !led_on) {
@@ -137,7 +140,7 @@ void send_data(EthernetClient client) {
     client.print(humidity_history[i]);
   }
   client.print("], \"fan_on\": ");
-  client.print(fan_on);
+  client.print(fan_real_on);
   client.print("}");
 }
 
@@ -177,8 +180,16 @@ void web_server() {
             send_data(client);
           } else if (is_fan_on) {
             Serial.println("Fan on request");
+            // fan manual on
+            digitalWrite(FAN_PIN, HIGH);
+            fan_real_on = true;
+            send_data(client);
           } else if (is_fan_off) {
             Serial.println("Fan off request");
+            // fan manual off
+            digitalWrite(FAN_PIN, LOW);
+            fan_real_on = false;
+            send_data(client);
           } else {
             Serial.println("Get web request");
             send_web(client);
