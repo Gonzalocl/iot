@@ -29,7 +29,7 @@ boolean is_get_data, is_fan_on, is_fan_off;
 byte mac[] = {
   0x90, 0xA2, 0xDA, 0x10, 0x80, 0xAA
 };
-IPAddress ip(169, 254, 139, 190);
+IPAddress ip(10, 1, 1, 2);
 EthernetServer server(80);
 
 void start_web_server() {
