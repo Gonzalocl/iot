@@ -69,7 +69,7 @@ void setup() {
   
 }
 
-void print_sensor_info(float temperature, float humidity) {
+void print_sensor_info() {
   Serial.print("Temperatura: ");
   Serial.print(temperature);
   Serial.println(" ºC");
@@ -78,30 +78,14 @@ void print_sensor_info(float temperature, float humidity) {
   Serial.println(" %");
 }
 
-void check_sensor_info(float temperature, float humidity) {
+void check_sensor_info() {
   
-  if (temperature >= temperature_threshold && !fan_on) {
-    // turn on fan
-    Serial.println("Encendido automatico ventilador");
-    digitalWrite(FAN_PIN, HIGH);
-    fan_on = true;
-  } else if (temperature < temperature_threshold && fan_on) {
-    // turn off fan
-    Serial.println("Apagado automatico ventilador");
-    digitalWrite(FAN_PIN, LOW);
-    fan_on = false;
-  }
-
-  if (humidity >= humidity_threshold && !led_on) {
-    // turn on led
-    Serial.println("Encendido automatico LED");
-    digitalWrite(LED_PIN, HIGH);
-    led_on = true;
-  } else if (humidity < humidity_threshold && led_on) {
-    // turn off led
-    Serial.println("Apagado automatico LED");
-    digitalWrite(LED_PIN, LOW);
-    led_on = false;
+  if (temperature >= temperature_threshold || humidity >= humidity_threshold) {
+    Serial.println("warning");
+    pson data;
+    data["temperature"] = temperature;
+    data["humidity"] = humidity;
+    thing_dht.call_endpoint(dht_ENDPOINT_ID, data);
   }
   
 }
@@ -116,8 +100,8 @@ void loop() {
     return;
   }
 
-  print_sensor_info(temperature, humidity);
-//  check_sensor_info(temperature, humidity);
+  print_sensor_info();
+  check_sensor_info();
 
   thing_relay.handle();
   thing_dht.handle();
