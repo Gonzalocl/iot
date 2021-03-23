@@ -2,6 +2,7 @@
 import argparse
 import requests
 import time
+import random
 
 template_url = 'http://{}:1026/v1/updateContext'
 template_payload = {
@@ -46,7 +47,7 @@ ip = ''
 lab = ''
 
 def random_temperature_humidity():
-    return 10, 15
+    return random.randrange(15, 25), random.randrange(75, 85)
 
 def setup():
     temperature, humidity = random_temperature_humidity()
