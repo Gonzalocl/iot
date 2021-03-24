@@ -41,7 +41,11 @@ def ngsi_send_request(fiware_ip, fiware_lab, temperature, humidity, updateAction
     template_payload['contextElements'][0]['attributes'][1]['value'] = humidity
     template_payload['updateAction'] = updateAction
     response = requests.post(url, json=template_payload).json()
-    return
+    return 'contextResponses' in response \
+        and len(response['contextResponses']) > 0 \
+        and 'statusCode' in response['contextResponses'][0] \
+        and 'code' in response['contextResponses'][0]['statusCode'] \
+        and response['contextResponses'][0]['statusCode']['code'] == '200'
 
 ip = ''
 lab = ''
@@ -51,12 +55,18 @@ def random_temperature_humidity():
 
 def setup():
     temperature, humidity = random_temperature_humidity()
-    ngsi_create(ip, lab, temperature, humidity)
+    if ngsi_create(ip, lab, temperature, humidity):
+        print('Temperature: {} // Humidity: {}'.format(temperature, humidity))
+    else:
+        print('CREATE FAILED')
 
 def loop():
     time.sleep(5)
     temperature, humidity = random_temperature_humidity()
-    ngsi_update(ip, lab, temperature, humidity)
+    if ngsi_update(ip, lab, temperature, humidity):
+        print('Temperature: {} // Humidity: {}'.format(temperature, humidity))
+    else:
+        print('FAILED UPDATE')
 
 def simulated_arduino(fiware_ip, fiware_lab):
     global ip, lab
