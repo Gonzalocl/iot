@@ -55,17 +55,15 @@ def random_temperature_humidity():
 
 def setup():
     temperature, humidity = random_temperature_humidity()
-    if ngsi_create(ip, lab, temperature, humidity):
-        print('Temperature: {} ºC | Humidity: {} %'.format(temperature, humidity))
-    else:
+    print('Temperature: {} ºC | Humidity: {} %'.format(temperature, humidity))
+    if not ngsi_create(ip, lab, temperature, humidity):
         print('CREATE FAILED')
 
 def loop():
     time.sleep(5)
     temperature, humidity = random_temperature_humidity()
-    if ngsi_update(ip, lab, temperature, humidity):
-        print('Temperature: {} ºC | Humidity: {} %'.format(temperature, humidity))
-    else:
+    print('Temperature: {} ºC | Humidity: {} %'.format(temperature, humidity))
+    if not ngsi_update(ip, lab, temperature, humidity):
         print('FAILED UPDATE')
 
 def simulated_arduino(fiware_ip, fiware_lab):
