@@ -56,7 +56,7 @@ def random_temperature_humidity():
 def setup():
     temperature, humidity = random_temperature_humidity()
     if ngsi_create(ip, lab, temperature, humidity):
-        print('Temperature: {} // Humidity: {}'.format(temperature, humidity))
+        print('Temperature: {} ºC | Humidity: {} %'.format(temperature, humidity))
     else:
         print('CREATE FAILED')
 
@@ -64,7 +64,7 @@ def loop():
     time.sleep(5)
     temperature, humidity = random_temperature_humidity()
     if ngsi_update(ip, lab, temperature, humidity):
-        print('Temperature: {} // Humidity: {}'.format(temperature, humidity))
+        print('Temperature: {} ºC | Humidity: {} %'.format(temperature, humidity))
     else:
         print('FAILED UPDATE')
 
