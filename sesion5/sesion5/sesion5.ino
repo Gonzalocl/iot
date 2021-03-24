@@ -40,7 +40,7 @@ void loop() {
   float humidity = dht.readHumidity();
 
   if (isnan(temperature) || isnan(humidity)) {
-    Serial.println("Error obteniendo los datos del sensor DHT11");
+    Serial.println("Error: read DHT11 data");
     return;
   }
 
