@@ -20,7 +20,7 @@ IPAddress ip(10, 1, 1, 2);
 IPAddress dns(192, 168, 1, 1);
 EthernetClient client;
 
-void ngsi_send_request(float temperature, float humidity, char* updateAction) {
+void ngsi_send_request(float temperature, float humidity, char const * update_action) {
 
   client.print(UPDATE_CHUNK_0);
   client.print(0);
@@ -29,7 +29,7 @@ void ngsi_send_request(float temperature, float humidity, char* updateAction) {
   client.print(UPDATE_CHUNK_3);
   client.print(humidity);
   client.print(UPDATE_CHUNK_4);
-  client.print(updateAction);
+  client.print(update_action);
   client.print(UPDATE_CHUNK_5);
 
 }
@@ -41,14 +41,14 @@ void start_ethernet() {
 
   // check hardware
   if (Ethernet.hardwareStatus() == EthernetNoHardware) {
-    Serial.println("No Ethernet port");
+    Serial.println("Error: no Ethernet port");
     while (true) {
       delay(1000);
     }
   }
   
   if (Ethernet.linkStatus() == LinkOFF) {
-    Serial.println("No Ethernet cable");
+    Serial.println("Error: no Ethernet cable");
   }
 
 }
@@ -75,7 +75,7 @@ void setup() {
   float humidity = dht.readHumidity();
 
   if (isnan(temperature) || isnan(humidity)) {
-    Serial.println("Error obteniendo los datos del sensor DHT11");
+    Serial.println("Error: read DHT11 data");
     return;
   }
 

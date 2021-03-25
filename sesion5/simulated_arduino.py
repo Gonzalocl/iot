@@ -34,12 +34,12 @@ def ngsi_create(fiware_ip, fiware_lab, temperature, humidity):
 def ngsi_update(fiware_ip, fiware_lab, temperature, humidity):
     return ngsi_send_request(fiware_ip, fiware_lab, temperature, humidity, 'UPDATE')
 
-def ngsi_send_request(fiware_ip, fiware_lab, temperature, humidity, updateAction):
+def ngsi_send_request(fiware_ip, fiware_lab, temperature, humidity, update_action):
     url = template_url.format(fiware_ip)
     template_payload['contextElements'][0]['id'] = 'Laboratorio{}'.format(fiware_lab)
     template_payload['contextElements'][0]['attributes'][0]['value'] = temperature
     template_payload['contextElements'][0]['attributes'][1]['value'] = humidity
-    template_payload['updateAction'] = updateAction
+    template_payload['updateAction'] = update_action
     response = requests.post(url, json=template_payload).json()
     return 'contextResponses' in response \
         and len(response['contextResponses']) > 0 \
