@@ -1,8 +1,34 @@
 #include<DHT.h>
 
+#include <SPI.h>
+#include <Ethernet.h>
+
 #define DHT_PIN 3
+#define LAB "1"
+
+#define UPDATE_CHUNK_0 "POST /v1/updateContext HTTP/1.1\r\nHost: localhost:1026\r\nContent-Type: application/json\r\nAccept: application/json\r\nContent-Length: "
+#define UPDATE_CHUNK_1 "\r\nConnection: close\r\n\r\n{\"contextElements\":[{\"type\":\"Laboratorio\",\"isPattern\":\"false\",\"id\":\"Laboratorio"
+#define UPDATE_CHUNK_2 "\",\"attributes\":[{\"name\":\"temperature\",\"type\":\"float\",\"value\":"
+#define UPDATE_CHUNK_3 "},{\"name\":\"humidity\",\"type\":\"float\",\"value\":"
+#define UPDATE_CHUNK_4 "}]}],\"updateAction\":\""
+#define UPDATE_CHUNK_5 "\"}"
 
 DHT dht(DHT_PIN, DHT11);
+EthernetClient client;
+
+void ngsi_send_request(float temperature, float humidity, char* updateAction) {
+
+  client.print(UPDATE_CHUNK_0);
+  client.print(0);
+  client.print(UPDATE_CHUNK_1 LAB UPDATE_CHUNK_2);
+  client.print(temperature);
+  client.print(UPDATE_CHUNK_3);
+  client.print(humidity);
+  client.print(UPDATE_CHUNK_4);
+  client.print(updateAction);
+  client.print(UPDATE_CHUNK_5);
+
+}
 
 void print_sensor_info(float temperature, float humidity) {
   Serial.print("Temperature: ");
