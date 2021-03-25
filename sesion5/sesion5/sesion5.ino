@@ -14,6 +14,10 @@
 #define UPDATE_CHUNK_5 "\"}"
 
 DHT dht(DHT_PIN, DHT11);
+
+byte mac[] = { 0x90, 0xA2, 0xDA, 0x10, 0x80, 0xAA };
+IPAddress ip(10, 1, 1, 2);
+IPAddress dns(192, 168, 1, 1);
 EthernetClient client;
 
 void ngsi_send_request(float temperature, float humidity, char* updateAction) {
@@ -27,6 +31,25 @@ void ngsi_send_request(float temperature, float humidity, char* updateAction) {
   client.print(UPDATE_CHUNK_4);
   client.print(updateAction);
   client.print(UPDATE_CHUNK_5);
+
+}
+
+void start_ethernet() {
+
+  // start Ethernet
+  Ethernet.begin(mac, ip, dns);
+
+  // check hardware
+  if (Ethernet.hardwareStatus() == EthernetNoHardware) {
+    Serial.println("No Ethernet port");
+    while (true) {
+      delay(1000);
+    }
+  }
+  
+  if (Ethernet.linkStatus() == LinkOFF) {
+    Serial.println("No Ethernet cable");
+  }
 
 }
 
@@ -45,6 +68,8 @@ void setup() {
   while(!Serial);
 
   dht.begin();
+
+  start_ethernet();
 
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
