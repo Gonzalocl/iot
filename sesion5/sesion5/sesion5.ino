@@ -18,9 +18,15 @@ DHT dht(DHT_PIN, DHT11);
 byte mac[] = { 0x90, 0xA2, 0xDA, 0x10, 0x80, 0xAA };
 IPAddress ip(10, 1, 1, 2);
 IPAddress dns(192, 168, 1, 1);
+char const * fiware_server = "yellow";
+int fiware_port = 1026;
 EthernetClient client;
 
-void ngsi_send_request(float temperature, float humidity, char const * update_action) {
+bool ngsi_send_request(float temperature, float humidity, char const * update_action) {
+
+  if (!client.connect(fiware_server, fiware_port)) {
+    return false;
+  }
 
   client.print(UPDATE_CHUNK_0);
   client.print(0);
@@ -31,6 +37,9 @@ void ngsi_send_request(float temperature, float humidity, char const * update_ac
   client.print(UPDATE_CHUNK_4);
   client.print(update_action);
   client.print(UPDATE_CHUNK_5);
+
+  client.stop();
+  return true;
 
 }
 
@@ -46,7 +55,7 @@ void start_ethernet() {
       delay(1000);
     }
   }
-  
+
   if (Ethernet.linkStatus() == LinkOFF) {
     Serial.println("Error: no Ethernet cable");
   }
@@ -54,16 +63,18 @@ void start_ethernet() {
 }
 
 void print_sensor_info(float temperature, float humidity) {
+
   Serial.print("Temperature: ");
   Serial.print(temperature);
   Serial.print(" ºC | ");
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.println(" %");
+
 }
 
 void setup() {
-  
+
   Serial.begin(9600);
   while(!Serial);
 
@@ -81,6 +92,8 @@ void setup() {
 
   print_sensor_info(temperature, humidity);
 
+  ngsi_send_request(temperature, humidity, "APPEND");
+
 }
 
 void loop() {
@@ -96,5 +109,7 @@ void loop() {
   }
 
   print_sensor_info(temperature, humidity);
-  
+
+  ngsi_send_request(temperature, humidity, "UPDATE");
+
 }
