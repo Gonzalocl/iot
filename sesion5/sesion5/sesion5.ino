@@ -4,6 +4,15 @@
 
 DHT dht(DHT_PIN, DHT11);
 
+void print_sensor_info(float temperature, float humidity) {
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.print(" ºC | ");
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.println(" %");
+}
+
 void setup() {
   
   Serial.begin(9600);
@@ -21,15 +30,6 @@ void setup() {
 
   print_sensor_info(temperature, humidity);
 
-}
-
-void print_sensor_info(float temperature, float humidity) {
-  Serial.print("Temperature: ");
-  Serial.print(temperature);
-  Serial.print(" ºC | ");
-  Serial.print("Humidity: ");
-  Serial.print(humidity);
-  Serial.println(" %");
 }
 
 void loop() {
