@@ -62,10 +62,14 @@ void setup() {
   start_ethernet();
 
   thing_relay["relay"] << digitalPin(FAN_PIN);
-  thing_dht["dht"] >> [](pson& out){
-    out["temperature"] = temperature;
-    out["humidity"] = humidity;
-  };
+  thing_dht["temperature"] >> outputValue(temperature);
+  thing_dht["humidity"] >> outputValue(humidity);
+  
+  
+//  thing_dht["dht"] >> [](pson& out){
+//    out["temperature"] = temperature;
+//    out["humidity"] = humidity;
+//  };
   
 }
 
