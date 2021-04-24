@@ -42,6 +42,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('ip')
     parser.add_argument('lab')
+    parser.add_argument('--print-json', default=False, action='store_true')
     args = parser.parse_args()
     json, data = query_lab(args.ip, args.lab)
 
@@ -54,3 +55,6 @@ if __name__ == '__main__':
         print('{} :: Temperature: {} ºC | Humidity: {} %'.format(d['element_id'],
                                                                  d['temperature'],
                                                                  d['humidity']))
+
+    if args.print_json:
+        pprint(json)
