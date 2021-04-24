@@ -1,6 +1,7 @@
 
 import argparse
 import requests
+from pprint import pprint
 
 template_url = 'http://{}:1026/v1/queryContext'
 template_payload = {
@@ -43,7 +44,13 @@ if __name__ == '__main__':
     parser.add_argument('lab')
     args = parser.parse_args()
     json, data = query_lab(args.ip, args.lab)
-    print(data)
-    # temperature, humidity = query_lab(args.ip, args.lab)
-    # print('Temperature: {}'.format(temperature))
-    # print('Humidity: {}'.format(humidity))
+
+    if not data:
+        print('ERROR')
+        pprint(json)
+        exit(1)
+
+    for d in data:
+        print('{} :: Temperature: {} ºC | Humidity: {} %'.format(d['element_id'],
+                                                                 d['temperature'],
+                                                                 d['humidity']))
