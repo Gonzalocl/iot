@@ -16,6 +16,8 @@ template_payload = {
 def query_lab(ip, lab):
     url = template_url.format(ip)
     template_payload['entities'][0]['id'] = 'Laboratorio{}'.format(lab)
+    if lab == '*':
+        template_payload['entities'][0]['isPattern'] = 'true'
     response = requests.post(url, json=template_payload).json()
     try:
         if not 'contextResponses' in response:
