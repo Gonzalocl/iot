@@ -62,6 +62,6 @@ if __name__ == '__main__':
         exit(1)
 
     print('subscriptionId: {}'.format(subscription_id))
-    
+
     if args.print_json:
         pprint(json)
