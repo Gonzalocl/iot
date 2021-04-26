@@ -15,7 +15,7 @@ template_payload = {
     'attributes': [
         'humidity'
     ],
-    'reference': 'http://localhost:1111/alerta',
+    'reference': 'http://192.168.1.33:1111/alerta',
     'duration': 'P1M',
     'notifyConditions': [
         {
