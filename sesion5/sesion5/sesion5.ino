@@ -13,6 +13,9 @@
 #define UPDATE_CHUNK_4 "}]}],\"updateAction\":\""
 #define UPDATE_CHUNK_5 "\"}"
 
+#define UPDATE_CONSTANT_LENGTH 214
+#define FLOAT_CONSTANT_LENGTH 3
+
 DHT dht(DHT_PIN, DHT11);
 
 byte mac[] = { 0x90, 0xA2, 0xDA, 0x10, 0x80, 0xAA };
@@ -22,6 +25,14 @@ char const * fiware_server = "yellow";
 int fiware_port = 1026;
 EthernetClient client;
 
+int get_float_length(float f) {
+  return FLOAT_CONSTANT_LENGTH;
+}
+
+int get_content_length(float temperature, float humidity) {
+  return UPDATE_CONSTANT_LENGTH + get_float_length(temperature) + get_float_length(humidity);
+}
+
 bool ngsi_send_request(float temperature, float humidity, char const * update_action) {
 
   if (!client.connect(fiware_server, fiware_port)) {
@@ -29,7 +40,7 @@ bool ngsi_send_request(float temperature, float humidity, char const * update_ac
   }
 
   client.print(UPDATE_CHUNK_0);
-  client.print(0);
+  client.print(get_content_length(temperature, humidity));
   client.print(UPDATE_CHUNK_1 LAB UPDATE_CHUNK_2);
   client.print(temperature);
   client.print(UPDATE_CHUNK_3);
