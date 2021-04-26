@@ -14,7 +14,7 @@
 #define UPDATE_CHUNK_5 "\"}"
 
 #define UPDATE_CONSTANT_LENGTH 214
-#define FLOAT_CONSTANT_LENGTH 3
+#define FLOAT_CONSTANT_LENGTH 4
 
 DHT dht(DHT_PIN, DHT11);
 
@@ -26,7 +26,22 @@ int fiware_port = 1026;
 EthernetClient client;
 
 int get_float_length(float f) {
-  return FLOAT_CONSTANT_LENGTH;
+
+  int len = 0;
+  float number = f;
+
+  if (f < 0) {
+    number = -f;
+    len = 1;
+  }
+
+  float i = 10;
+  while (number >= i) {
+    i*=10;
+    len++;
+  }
+  
+  return FLOAT_CONSTANT_LENGTH + len;
 }
 
 int get_content_length(float temperature, float humidity) {
